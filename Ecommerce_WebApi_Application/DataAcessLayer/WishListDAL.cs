@@ -69,6 +69,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                 {
                     MyWishlistModel item = new MyWishlistModel
                     {
+                        WishList_Id = Convert.ToInt32(reader["WishList_Id"]),
                         Customer_Id = Convert.ToInt32(reader["Customer_Id"]),
                         Product_Id = Convert.ToInt32(reader["Product_Id"]),
                         Customer_FName = reader["Customer_FName"].ToString(),
