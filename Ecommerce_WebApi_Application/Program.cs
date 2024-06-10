@@ -9,6 +9,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ProductDAL>();
+builder.Services.AddScoped<PaymentDAL>();
+
 
 var app = builder.Build();
 

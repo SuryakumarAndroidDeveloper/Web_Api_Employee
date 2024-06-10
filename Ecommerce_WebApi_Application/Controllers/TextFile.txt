@@ -1,0 +1,430 @@
+﻿using Ecommerce_WebApi_Application.DataAcessLayer;
+using Ecommerce_WebApi_Application.Models;
+using Microsoft.AspNetCore.Mvc;
+using MyCaRt.Models;
+using Newtonsoft.Json;
+
+namespace Ecommerce_WebApi_Application.Controllers
+{
+
+   
+    public class NotesController : Controller
+    {
+
+            public readonly IConfiguration _configuration;
+            public readonly ProductDAL _productDAL;
+
+            public NotesController(IConfiguration configuration)
+            {
+                _configuration = configuration;
+
+            _productDAL = new ProductDAL(configuration);
+
+            }
+
+
+
+            [HttpPost]
+            [Route("InsertProductCategory")]
+            public IActionResult InsertProductCategory(ProductCategoryModel productCategory)
+            {
+                bool isInserted = _productDAL.InsertProductCategory(productCategory);
+
+                if (isInserted)
+                {
+                    return Ok("ProductCategory inserted successfully.");
+                }
+                else
+                {
+                    return BadRequest("Failed to insert ProductCategory.");
+                }
+            }
+
+
+            [HttpPost]
+            [Route("InsertProduct_Details")]
+            public IActionResult InsertProduct_Details(ProductModel product)
+            {
+                bool isInserted = _productDAL.InsertProduct_Details(product);
+
+                if (isInserted)
+                {
+                    return Ok("Product   Added successfully.");
+                }
+                else
+                {
+                    return BadRequest("Failed to Add Product.");
+                }
+            }
+
+            [HttpGet]
+            [Route("GetProductCategory")]
+            public String GetProductCategory()
+            {
+                List<ProductCategoryModel> productCategories = _productDAL.GetProductCategory();
+
+                if (productCategories.Count > 0)
+                {
+
+                    return JsonConvert.SerializeObject(productCategories);
+
+                }
+                else
+                {
+                    return "No ProductCategory found.";
+                }
+
+            }
+
+
+            [HttpPost]
+            [Route("InsertCustomerDetails")]
+            public async Task<IActionResult> InsertCustomerDetails([FromBody] CustomerModel customerDetails)
+            {
+                bool isSuccess = await _productDAL.InsertCustomerDetailsAsync(customerDetails);
+
+                if (isSuccess)
+                {
+                    return Ok("Customer details inserted successfully.");
+                }
+                else
+                {
+                    return StatusCode(500, "Internal server error: Failed to insert customer details.");
+                }
+            }
+
+
+
+
+            [HttpGet]
+            [Route("GetAllCustomer")]
+            public async Task<IActionResult> GetAllCustomer()
+            {
+                List<CustomerInterestedCategory> customers = await _productDAL.GetAllCustomersAsync();
+
+                if (customers != null && customers.Count > 0)
+                {
+                    return Ok(customers);
+                }
+                else
+                {
+                    return StatusCode(500, "Internal server error: Failed to get customer details.");
+                }
+            }
+            [HttpGet]
+            [Route("GetCustomerByID")]
+            public async Task<IActionResult> GetCustomerByID(int id)
+            {
+                var customer = await _productDAL.GetCustomerByIdAsync(id);
+
+                if (customer != null)
+                {
+                    return Ok(customer);
+                }
+                else
+                {
+                    return NotFound("Customer not found");
+                }
+            }
+
+            [HttpPost]
+            [Route("UpdateCustomerDetails")]
+            public async Task<IActionResult> UpdateCustomerDetails(int id, [FromBody] CustomerModel customerDetails)
+            {
+                if (customerDetails == null)
+                {
+                    return BadRequest("Customer details are required.");
+                }
+
+                bool isSuccess = await _productDAL.UpdateCustomerDetailsAsync(id, customerDetails);
+
+                if (isSuccess)
+                {
+                    return Ok("Customer details updated successfully.");
+                }
+                else
+                {
+                    return StatusCode(500, "Internal server error: Failed to update customer details.");
+                }
+            }
+
+
+            [HttpPost]
+            [Route("DeleteCustomerById")]
+            public async Task<IActionResult> DeleteCustomerById(int id)
+            {
+                try
+                {
+                    bool isDeactivated = await _productDAL.DeactivateCustomerByIdAsync(id);
+
+                    if (isDeactivated)
+                    {
+                        return Ok("Customer deactivated successfully.");
+                    }
+                    else
+                    {
+                        return NotFound("Customer not found.");
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    return StatusCode(500, "Internal server error");
+                }
+            }
+
+
+            [HttpGet]
+            [Route("GetAllProduct")]
+            public async Task<IActionResult> GetAllProduct()
+            {
+                List<ProductModel> products = await _productDAL.GetAllProductAsync();
+
+                if (products != null && products.Count > 0)
+                {
+                    return Ok(products);
+                }
+                else
+                {
+                    return StatusCode(500, "Internal server error: Failed to get customer details.");
+                }
+            }
+
+
+            [HttpGet]
+            [Route("GetAllCustomer_Name")]
+            public String GetAllCustomer_Name()
+            {
+                List<CustomerModel> customer_Name = _productDAL.GetAllCustomer_Name();
+
+                if (customer_Name.Count > 0)
+                {
+
+                    return JsonConvert.SerializeObject(customer_Name);
+
+                }
+                else
+                {
+                    return "No ProductCategory found.";
+                }
+
+            }
+
+
+            [HttpPost]
+            [Route("AddToCart")]
+            public async Task<IActionResult> AddToCart([FromBody] CartItemModel cartItem)
+            {
+                if (cartItem == null)
+                {
+                    return BadRequest("cartItem are required.");
+                }
+
+                bool isSuccess = await _productDAL.AddToCart(cartItem);
+
+                if (isSuccess)
+                {
+                    return Ok("cartItem updated successfully.");
+                }
+                else
+                {
+                    return StatusCode(500, "Internal server error: Failed to update  cartItem.");
+                }
+            }
+
+
+            [HttpPost]
+            [Route("AddToWishList")]
+            public async Task<IActionResult> AddToWishList([FromBody] CartItemModel cartItem)
+            {
+                if (cartItem == null)
+                {
+                    return BadRequest("cartItem are required.");
+                }
+
+                bool isSuccess = await _productDAL.AddToWishList(cartItem);
+
+                if (isSuccess)
+                {
+                    return Ok("cartItem updated successfully.");
+                }
+                else
+                {
+                    return StatusCode(500, "Internal server error: Failed to update  cartItem.");
+                }
+            }
+
+
+
+
+            [HttpGet]
+            [Route("GetCartByCustomer")]
+            public String GetCartByCustomer(int customerId)
+            {
+                List<DisplayCartModel> customerCart = _productDAL.GetCartByCustomerId(customerId);
+
+                if (customerCart.Count > 0)
+                {
+
+                    return JsonConvert.SerializeObject(customerCart);
+
+                }
+                else
+                {
+                    return "No cart found.";
+                }
+
+            }
+
+
+
+            [HttpPost]
+            [Route("UpdateCartItemQuantity")]
+            public IActionResult UpdateCartItemQuantity([FromBody] UpdateCartItemQuantityModel model)
+            {
+                bool isUpdated = _productDAL.UpdateCartItemQuantity(model.CartItemId, model.NewQuantity);
+
+                if (isUpdated)
+                {
+                    return Ok("Quantity updated successfully.");
+                }
+                else
+                {
+                    return BadRequest("Failed to update quantity.");
+                }
+            }
+
+
+
+
+
+
+            [HttpPost]
+            [Route("DeleteCartItem")]
+            public IActionResult DeleteCartItem(int cartItemId)
+            {
+                bool isDeleted = _productDAL.DeleteCartItem(cartItemId);
+
+                if (isDeleted)
+                {
+                    return Ok("Item deleted successfully.");
+                }
+                else
+                {
+                    return BadRequest("Failed to delete item.");
+                }
+            }
+
+            /*        [HttpPost]
+                    [Route("PlaceOrder")]
+                    public async Task<IActionResult> PlaceOrder([FromBody] OrderProductModel orderRequest)
+                    {
+                        try
+                        {
+                            if (orderRequest == null || orderRequest.OrderProducts == null || orderRequest.OrderProducts.Count == 0)
+                            {
+                                return BadRequest("Invalid order data.");
+                            }
+
+                            foreach (var orderProduct in orderRequest.OrderProducts)
+                            {
+                                bool isOrderPlaced = await _productDAL.PlaceOrder(orderRequest.Customer_Id, orderProduct.Product_Id, orderProduct.Quantity, orderRequest.TotalPrice);
+
+                                if (!isOrderPlaced)
+                                {
+                                    return BadRequest("Failed to place one or more orders.");
+                                }
+                            }
+
+                            return Ok("All orders placed successfully.");
+                        }
+                        catch (Exception ex)
+                        {
+                            // Log the exception or handle it as per your application's error handling strategy
+                            return BadRequest("Failed to place the orders.");
+                        }
+                    }*/
+
+
+            [HttpPost]
+            [Route("PlaceOrder")]
+            public async Task<IActionResult> PlaceOrder([FromBody] OrderProductModel orderRequest)
+            {
+                try
+                {
+                    if (orderRequest == null || orderRequest.OrderProducts == null || orderRequest.OrderProducts.Count == 0)
+                    {
+                        return BadRequest("Invalid order data.");
+                    }
+
+                    foreach (var orderProduct in orderRequest.OrderProducts)
+                    {
+                        bool isOrderPlaced = await _productDAL.PlaceOrder(orderRequest.Customer_Id, orderRequest.OrderProducts);
+
+                        if (!isOrderPlaced)
+                        {
+                            return BadRequest("Failed to place the order.");
+                        }
+                    }
+
+                    return Ok("Order placed successfully.");
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception or handle it as per your application's error handling strategy
+                    return BadRequest("Failed to place the orders.");
+                }
+            }
+
+
+            [HttpGet]
+            [Route("GetOrderByCustomer")]
+            public IActionResult GetOrderByCustomer(int customerId)
+            {
+                List<MyOrderModel> customerOrder = _productDAL.GetOrderByCustomerId(customerId);
+
+                if (customerOrder.Count > 0)
+                {
+
+                    return Ok(JsonConvert.SerializeObject(customerOrder));
+
+                }
+                else
+                {
+                    return NotFound("No order found.");
+                }
+
+            }
+
+            [HttpGet]
+            [Route("GetWishListByCustomer")]
+            public IActionResult GetWishListByCustomer(int customerId)
+            {
+                List<MyWishlistModel> customerOrder = _productDAL.GetWishListByCustomer(customerId);
+
+                if (customerOrder.Count > 0)
+                {
+
+                    return Ok(JsonConvert.SerializeObject(customerOrder));
+
+                }
+                else
+                {
+                    return NotFound("No order found.");
+                }
+
+            }
+
+
+
+
+
+
+
+
+
+
+        }
+    }
+
+
