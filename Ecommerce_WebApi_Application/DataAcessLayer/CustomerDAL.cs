@@ -253,6 +253,56 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
 
             return customer_Name;
         }
+        public bool IsCustomer_FNameAvailable(string customerFName)
+        {
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                using (SqlCommand cmd = new SqlCommand("CheckCustomer_FName", connection))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Customer_FName", customerFName);
+
+                    connection.Open();
+                    int count = (int)cmd.ExecuteScalar(); // Use ExecuteScalar to get the count result
+
+                    return count > 0; // Return true if the category name exists
+                }
+            }
+        }
+
+        public bool IsEmailAvailable(string email)
+        {
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                using (SqlCommand cmd = new SqlCommand("CheckCustomer_Email", connection))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Customer_Email", email);
+
+                    connection.Open();
+                    int count = (int)cmd.ExecuteScalar(); // Use ExecuteScalar to get the count result
+
+                    return count > 0; // Return true if the category name exists
+                }
+            }
+        }
+
+        public bool IsMobileAvailable(string mobile)
+        {
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                using (SqlCommand cmd = new SqlCommand("CheckCustomer_Mobile", connection))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Customer_Mobile", mobile);
+
+                    connection.Open();
+                    int count = (int)cmd.ExecuteScalar(); // Use ExecuteScalar to get the count result
+
+                    return count > 0; // Return true if the category name exists
+                }
+            }
+        }
 
 
 

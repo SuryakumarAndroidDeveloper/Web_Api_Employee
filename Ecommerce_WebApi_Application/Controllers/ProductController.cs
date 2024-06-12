@@ -57,7 +57,28 @@ namespace Ecommerce_WebApi_Application.Controllers
                 return StatusCode(500, "Internal server error: Failed to get customer details.");
             }
         }
+        //validate product code
 
+        [HttpPost]
+        [Route("IsProduct_CodeAvailable")]
+        public IActionResult IsProduct_CodeAvailable([FromBody] ProductCodeRequest request)
+        {
+            bool isAvailable = _productDAL.IsProduct_CodeAvailable(request.ProductCode);
+
+            if (isAvailable)
+            {
+                return Ok(new { Exists = isAvailable });
+            }
+            else
+            {
+                return BadRequest(new { Exists = isAvailable });
+            }
+        }
+
+        public class ProductCodeRequest
+        {
+            public string ProductCode { get; set; }
+        }
 
 
 

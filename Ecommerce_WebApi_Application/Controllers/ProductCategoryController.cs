@@ -66,6 +66,27 @@ namespace Ecommerce_WebApi_Application.Controllers
 
         }
 
+        [HttpPost]
+        [Route("IsCategory_NameAvailable")]
+        public IActionResult IsCategory_NameAvailable([FromBody] CategoryNameRequest request)
+        {
+            bool isAvailable = _productcategoryDAL.IsCategory_NameAvailable(request.CategoryName);
+
+            if (isAvailable)
+            {
+                return Ok(new { Exists = isAvailable });
+            }
+            else
+            {
+                return BadRequest(new { Exists = isAvailable });
+            }
+        }
+
+        public class CategoryNameRequest
+        {
+            public string CategoryName { get; set; }
+        }
+
 
     }
 }

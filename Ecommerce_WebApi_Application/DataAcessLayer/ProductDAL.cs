@@ -67,7 +67,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                                 Product_Category = reader["Product_Category"].ToString(),
                                 Product_Code = reader["Product_Code"].ToString(),
                                 Product_Name = reader["Product_Name"].ToString(),
-                                Product_Price = Convert.ToInt32(reader["Product_Price"]),
+                                Product_Price = Convert.ToDecimal(reader["Product_Price"]),
                                 Product_Description = reader["Product_Description"].ToString(),
                                 Available_Quantity = Convert.ToInt32(reader["Available_Quantity"]),
                             };
@@ -82,6 +82,26 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
             }
 
             return products;
+        }
+
+
+
+
+        public bool IsProduct_CodeAvailable(string productCode)
+        {
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                using (SqlCommand cmd = new SqlCommand("CheckProduct_Code", connection))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Product_Code", productCode);
+
+                    connection.Open();
+                    int count = (int)cmd.ExecuteScalar(); // Use ExecuteScalar to get the count result
+
+                    return count > 0; // Return true if the category name exists
+                }
+            }
         }
 
 

@@ -74,7 +74,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                         Product_Name = reader["Product_Name"].ToString(),
                         //Customer_FName = reader["Customer_FName"].ToString(),
                         Quantity = Convert.ToInt32(reader["Quantity"]),
-                        Product_Price = Convert.ToInt32(reader["Product_Price"])
+                        Product_Price = Convert.ToDecimal(reader["Product_Price"])
 
                     };
 

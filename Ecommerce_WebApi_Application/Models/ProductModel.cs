@@ -10,7 +10,7 @@
 
         public string? Product_Name { get; set; }
 
-        public int? Product_Price { get; set; }
+        public decimal? Product_Price { get; set; }
 
         public string? Product_Description { get; set; }
 

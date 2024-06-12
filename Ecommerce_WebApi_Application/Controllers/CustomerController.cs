@@ -138,7 +138,69 @@ namespace Ecommerce_WebApi_Application.Controllers
             }
 
         }
+        //validate customer name
+        [HttpPost]
+        [Route("IsCustomer_FNameAvailable")]
+        public IActionResult IsCustomer_FNameAvailable([FromBody] CustomerNameRequest request)
+        {
+            bool isAvailable = _customerDAL.IsCustomer_FNameAvailable(request.Customer_FName);
 
+            if (isAvailable)
+            {
+                return Ok(new { Exists = isAvailable });
+            }
+            else
+            {
+                return BadRequest(new { Exists = isAvailable });
+            }
+        }
+
+        public class CustomerNameRequest
+        {
+            public string Customer_FName { get; set; }
+        }
+        //validate email
+        [HttpPost]
+        [Route("IsEmailAvailable")]
+        public IActionResult IsEmailAvailable([FromBody] EmailRequest request)
+        {
+            bool isAvailable = _customerDAL.IsEmailAvailable(request.Email);
+
+            if (isAvailable)
+            {
+                return Ok(new { Exists = isAvailable });
+            }
+            else
+            {
+                return BadRequest(new { Exists = isAvailable });
+            }
+        }
+
+        public class EmailRequest
+        {
+            public string Email { get; set; }
+        }
+        //validate mobile number
+        [HttpPost]
+        [Route("IsMobileAvailable")]
+        public IActionResult IsMobileAvailable([FromBody] MobileRequest request)
+        {
+            bool isAvailable = _customerDAL.IsMobileAvailable(request.Mobile);
+
+            if (isAvailable)
+            {
+                return Ok(new { Exists = isAvailable });
+            }
+            else
+            {
+                return BadRequest(new { Exists = isAvailable });
+            }
+        }
+
+        public class MobileRequest
+        {
+            public string Mobile { get; set; }
+        }
 
 
     }

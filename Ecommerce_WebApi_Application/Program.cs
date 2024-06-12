@@ -9,6 +9,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ProductDAL>();
+builder.Services.AddScoped<ProductCategoryDAL>();
+builder.Services.AddScoped<CartDAL>();
+builder.Services.AddScoped<CustomerDAL>();
+builder.Services.AddScoped<OrderDAL>();
+builder.Services.AddScoped<WishListDAL>();
 builder.Services.AddScoped<PaymentDAL>();
 
 

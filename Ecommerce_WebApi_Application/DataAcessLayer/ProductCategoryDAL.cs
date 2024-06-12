@@ -61,6 +61,22 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
 
             return productCategories;
         }
+        public bool IsCategory_NameAvailable(string categoryName)
+        {
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                using (SqlCommand cmd = new SqlCommand("CheckCategory_Name", connection))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Category_Name", categoryName);
+
+                    connection.Open();
+                    int count = (int)cmd.ExecuteScalar(); // Use ExecuteScalar to get the count result
+
+                    return count > 0; // Return true if the category name exists
+                }
+            }
+        }
 
 
 

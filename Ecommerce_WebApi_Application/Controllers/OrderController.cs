@@ -21,7 +21,6 @@ namespace Ecommerce_WebApi_Application.Controllers
         }
 
         //place order for the customer
-
         [HttpPost]
         [Route("PlaceOrder")]
         public async Task<IActionResult> PlaceOrder([FromBody] OrderProductModel orderRequest)
@@ -33,24 +32,61 @@ namespace Ecommerce_WebApi_Application.Controllers
                     return BadRequest("Invalid order data.");
                 }
 
+                // Collect all order products into a single list
+                var allOrderProducts = new List<OrderProduct>();
                 foreach (var orderProduct in orderRequest.OrderProducts)
                 {
-                    bool isOrderPlaced = await _orderDAL.PlaceOrder(orderRequest.Customer_Id, orderRequest.OrderProducts);
-
-                    if (!isOrderPlaced)
-                    {
-                        return BadRequest("Failed to place the order.");
-                    }
+                    allOrderProducts.Add(orderProduct);
                 }
 
-                return Ok("Order placed successfully.");
+                // Call the DAL method to place the order
+                bool isOrderPlaced = await _orderDAL.PlaceOrder(orderRequest.Customer_Id, allOrderProducts);
+
+                if (isOrderPlaced)
+                {
+                    return Ok("Order placed successfully.");
+                }
+                else
+                {
+                    return BadRequest("Failed to place the order.");
+                }
             }
             catch (Exception ex)
             {
                 // Log the exception or handle it as per your application's error handling strategy
-                return BadRequest("Failed to place the orders.");
+                return BadRequest("Failed to place the order.");
             }
         }
+
+        /*       [HttpPost]
+               [Route("PlaceOrder")]
+               public async Task<IActionResult> PlaceOrder([FromBody] OrderProductModel orderRequest)
+               {
+                   try
+                   {
+                       if (orderRequest == null || orderRequest.OrderProducts == null || orderRequest.OrderProducts.Count == 0)
+                       {
+                           return BadRequest("Invalid order data.");
+                       }
+
+                       foreach (var orderProduct in orderRequest.OrderProducts)
+                       {
+                           bool isOrderPlaced = await _orderDAL.PlaceOrder(orderRequest.Customer_Id, orderRequest.OrderProducts);
+
+                           if (!isOrderPlaced)
+                           {
+                               return BadRequest("Failed to place the order.");
+                           }
+                       }
+
+                       return Ok("Order placed successfully.");
+                   }
+                   catch (Exception ex)
+                   {
+                       // Log the exception or handle it as per your application's error handling strategy
+                       return BadRequest("Failed to place the orders.");
+                   }
+               }*/
         //get the orders based on the customerid
 
         [HttpGet]
