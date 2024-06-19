@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Data;
 
+
 namespace Ecommerce_WebApi_Application.DataAcessLayer
 {
     public class ProductCategoryDAL
@@ -30,33 +31,48 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                 }
             }
         }
-//Get the ProductCategory from DB
-        public List<ProductCategoryModel> GetProductCategory()
+        //Get the ProductCategory from DB
+        public List<ProductCategoryModel> GetProductCategory(string storedProcedureName)
         {
             List<ProductCategoryModel> productCategories = new List<ProductCategoryModel>();
 
-            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            try
             {
-                SqlCommand command = new SqlCommand("GetProductCategory", connection)
+                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
                 {
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                connection.Open();
-
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
+                    SqlCommand command = new SqlCommand(storedProcedureName, connection)
                     {
-                        ProductCategoryModel product = new ProductCategoryModel
-                        {
-                            Category_Id = Convert.ToInt32(reader["Category_Id"]),
-                            Category_Name = reader["Category_Name"].ToString(),
+                        CommandType = CommandType.StoredProcedure
+                    };
 
-                        };
-                        productCategories.Add(product);
+                    connection.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ProductCategoryModel product = new ProductCategoryModel
+                            {
+                                Category_Id = Convert.ToInt32(reader["Category_Id"]),
+                                Category_Name = reader["Category_Name"].ToString(),
+                            };
+                            productCategories.Add(product);
+                        }
                     }
                 }
+            }
+            catch (SqlException ex)
+            {
+                // Log the exception (you can use any logging framework or mechanism you prefer)
+                Console.WriteLine($"SQL Error: {ex.Message}");
+                // Rethrow the exception to be handled by the controller
+                throw;
+            }
+            catch (Exception ex)
+            {
+                // Handle other potential exceptions
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
             }
 
             return productCategories;
@@ -84,4 +100,6 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
 
 
     }
+
+
 }

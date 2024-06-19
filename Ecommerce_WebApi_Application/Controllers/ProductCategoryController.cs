@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 using Ecommerce_WebApi_Application.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
+using System.Collections.Generic;
+using System.Data.SqlClient;
+
 namespace Ecommerce_WebApi_Application.Controllers
 {
 
@@ -16,32 +19,48 @@ namespace Ecommerce_WebApi_Application.Controllers
     public class ProductCategoryController : ControllerBase
     {
 
-        public readonly IConfiguration _configuration;
+      
         public readonly ProductCategoryDAL _productcategoryDAL;
+       
 
-        public ProductCategoryController(IConfiguration configuration)
+        public ProductCategoryController(IConfiguration configuration,ProductCategoryDAL productCategoryDAL)
         {
-            _configuration = configuration;
-
-            _productcategoryDAL = new ProductCategoryDAL(configuration);
-
+          
+            _productcategoryDAL = productCategoryDAL;
         }
 
-
+   
 
         [HttpPost]
         [Route("InsertProductCategory")]
         public IActionResult InsertProductCategory(ProductCategoryModel productCategory)
         {
-            bool isInserted = _productcategoryDAL.InsertProductCategory(productCategory);
-
-            if (isInserted)
+            if (productCategory == null || string.IsNullOrWhiteSpace(productCategory.Category_Name))
             {
-                return Ok("ProductCategory inserted successfully.");
+                return BadRequest("Failed to insert ProductCategory.");
+            }
+            if (_productcategoryDAL.IsCategory_NameAvailable(productCategory.Category_Name))
+            {
+                return BadRequest(new ErrorResponse
+                {
+                    StatusCode = 400,
+                    Message = "Category name already exists.",
+                    Details = new List<string> { $"The category name '{productCategory.Category_Name}' is already taken." }
+                });
             }
             else
             {
-                return BadRequest("Failed to insert ProductCategory.");
+                bool isInserted = _productcategoryDAL.InsertProductCategory(productCategory);
+
+                if (isInserted)
+                {
+                    return Ok("ProductCategory inserted successfully.");
+                }
+                else
+                {
+                    return BadRequest("Failed to insert ProductCategory.");
+                }
+             
             }
         }
 
@@ -49,21 +68,35 @@ namespace Ecommerce_WebApi_Application.Controllers
 
         [HttpGet]
         [Route("GetProductCategory")]
-        public String GetProductCategory()
+        public IActionResult GetProductCategory(string storedProcedureName = "GetProductCategory")
         {
-            List<ProductCategoryModel> productCategories = _productcategoryDAL.GetProductCategory();
-
-            if (productCategories.Count > 0)
+            try
             {
+                List<ProductCategoryModel> productCategories = _productcategoryDAL.GetProductCategory(storedProcedureName);
 
-                return JsonConvert.SerializeObject(productCategories);
-
+                if (productCategories.Count > 0)
+                {
+                    return Ok(productCategories);
+                }
+                else
+                {
+                    return NotFound("No product categories found.");
+                }
             }
-            else
+            catch (SqlException ex)
             {
-                return "No ProductCategory found.";
+                // Log the exception (you can use any logging framework or mechanism you prefer)
+                Console.WriteLine($"SQL Error: {ex.Message}");
+                // Return a 500 Internal Server Error with the SQL error message
+                return StatusCode(500, $"SQL Error: {ex.Message}");
             }
-
+            catch (Exception ex)
+            {
+                // Log the exception (you can use any logging framework or mechanism you prefer)
+                Console.WriteLine($"Error: {ex.Message}");
+                // Return a 500 Internal Server Error with the general error message
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
         }
 
         [HttpPost]
@@ -81,6 +114,8 @@ namespace Ecommerce_WebApi_Application.Controllers
                 return BadRequest(new { Exists = isAvailable });
             }
         }
+
+   
 
         public class CategoryNameRequest
         {

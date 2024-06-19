@@ -5,7 +5,9 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeManagement", "EmployeeManagement\EmployeeManagement.csproj", "{B2ACDF6D-2373-49D7-96DC-A3B01966814D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce_WebApi_Application", "Ecommerce_WebApi_Application\Ecommerce_WebApi_Application.csproj", "{117DB953-2EAB-47C1-9F60-AF1D787D184E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce_WebApi_Application", "Ecommerce_WebApi_Application\Ecommerce_WebApi_Application.csproj", "{117DB953-2EAB-47C1-9F60-AF1D787D184E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCaRt_XUnitTest", "MyCaRt_XUnitTest\MyCaRt_XUnitTest.csproj", "{CEEB638D-12E5-4404-A850-BEF691F1474E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{117DB953-2EAB-47C1-9F60-AF1D787D184E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{117DB953-2EAB-47C1-9F60-AF1D787D184E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{117DB953-2EAB-47C1-9F60-AF1D787D184E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEEB638D-12E5-4404-A850-BEF691F1474E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEEB638D-12E5-4404-A850-BEF691F1474E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEEB638D-12E5-4404-A850-BEF691F1474E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEEB638D-12E5-4404-A850-BEF691F1474E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
