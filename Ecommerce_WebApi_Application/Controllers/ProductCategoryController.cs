@@ -41,12 +41,7 @@ namespace Ecommerce_WebApi_Application.Controllers
             }
             if (_productcategoryDAL.IsCategory_NameAvailable(productCategory.Category_Name))
             {
-                return BadRequest(new ErrorResponse
-                {
-                    StatusCode = 400,
-                    Message = "Category name already exists.",
-                    Details = new List<string> { $"The category name '{productCategory.Category_Name}' is already taken." }
-                });
+                return BadRequest("Failed to insert ProductCategory.");
             }
             else
             {
@@ -68,11 +63,11 @@ namespace Ecommerce_WebApi_Application.Controllers
 
         [HttpGet]
         [Route("GetProductCategory")]
-        public IActionResult GetProductCategory(string storedProcedureName = "GetProductCategory")
+        public IActionResult GetProductCategory()
         {
             try
             {
-                List<ProductCategoryModel> productCategories = _productcategoryDAL.GetProductCategory(storedProcedureName);
+                List<ProductCategoryModel> productCategories = _productcategoryDAL.GetProductCategory();
 
                 if (productCategories.Count > 0)
                 {

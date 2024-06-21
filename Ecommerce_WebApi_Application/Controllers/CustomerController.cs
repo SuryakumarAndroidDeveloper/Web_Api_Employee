@@ -13,10 +13,9 @@ namespace Ecommerce_WebApi_Application.Controllers
         public readonly IConfiguration _configuration;
         public readonly CustomerDAL _customerDAL;
 
-        public CustomerController(IConfiguration configuration)
+        public CustomerController(IConfiguration configuration,CustomerDAL customerDAL)
         {
-            _configuration = configuration;
-            _customerDAL = new CustomerDAL(configuration);
+            _customerDAL = customerDAL;
 
         }
 
@@ -59,8 +58,12 @@ namespace Ecommerce_WebApi_Application.Controllers
         [Route("GetCustomerByID")]
         public async Task<IActionResult> GetCustomerByID(int id)
         {
+            if (id < 0)
+            {
+                return BadRequest("Fail to get Customer");
+            }
             var customer = await _customerDAL.GetCustomerByIdAsync(id);
-
+          
             if (customer != null)
             {
                 return Ok(customer);
@@ -97,6 +100,10 @@ namespace Ecommerce_WebApi_Application.Controllers
         [Route("DeleteCustomerById")]
         public async Task<IActionResult> DeleteCustomerById(int id)
         {
+            if (id<0 || id ==0)
+            {
+                return BadRequest("Failed to find the customer details");
+            }
             try
             {
                 bool isDeactivated = await _customerDAL.DeactivateCustomerByIdAsync(id);
@@ -122,19 +129,19 @@ namespace Ecommerce_WebApi_Application.Controllers
 
         [HttpGet]
         [Route("GetAllCustomer_Name")]
-        public String GetAllCustomer_Name()
+        public IActionResult GetAllCustomer_Name()
         {
             List<CustomerModel> customer_Name = _customerDAL.GetAllCustomer_Name();
 
             if (customer_Name.Count > 0)
             {
 
-                return JsonConvert.SerializeObject(customer_Name);
+                return Ok(customer_Name);
 
             }
             else
             {
-                return "No ProductCategory found.";
+                return NotFound("Customer Not Found.");
             }
 
         }

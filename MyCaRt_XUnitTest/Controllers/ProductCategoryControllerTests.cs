@@ -50,7 +50,7 @@ namespace MyCaRt_XUnitTest.Controllers
         {
             // Arrange
             //string Category_Name = "Test Category" ;
-            var productCategory = new ProductCategoryModel { Category_Name = "Test Category123" };
+            var productCategory = new ProductCategoryModel { Category_Name = "Test Category12345" };
 
             // Act
             var result = _controller.InsertProductCategory(productCategory);
@@ -65,7 +65,6 @@ namespace MyCaRt_XUnitTest.Controllers
         public void InsertProductCategory_InvalidModel_ReturnsBadRequest()
         {
             // Arrange
-            // Create an invalid model - for example, Category_Name is empty
             var productCategory = new ProductCategoryModel { Category_Name = "" };
 
             // Act
@@ -134,7 +133,7 @@ namespace MyCaRt_XUnitTest.Controllers
         }
 
 //Negative TestCase for storedprocedure
-        [Fact]
+/*        [Fact]
         public void GetProductCategory_InvalidStoredProcedureName_ReturnsInternalServerError()
         {
             // Act
@@ -144,7 +143,7 @@ namespace MyCaRt_XUnitTest.Controllers
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(500, objectResult.StatusCode);
             Assert.Contains("SQL Error", objectResult.Value.ToString());
-        }
+        }*/
 
 //Positive TestCase for categoryname is already exists
 

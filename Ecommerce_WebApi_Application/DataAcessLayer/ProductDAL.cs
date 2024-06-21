@@ -76,9 +76,18 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                     }
                 }
             }
+            catch (SqlException ex)
+            {
+                // Log the exception (you can use any logging framework or mechanism you prefer)
+                Console.WriteLine($"SQL Error: {ex.Message}");
+                // Rethrow the exception to be handled by the controller
+                throw;
+            }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                // Handle other potential exceptions
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
             }
 
             return products;

@@ -32,7 +32,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
             }
         }
         //Get the ProductCategory from DB
-        public List<ProductCategoryModel> GetProductCategory(string storedProcedureName)
+        public List<ProductCategoryModel> GetProductCategory()
         {
             List<ProductCategoryModel> productCategories = new List<ProductCategoryModel>();
 
@@ -40,7 +40,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
             {
                 using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
                 {
-                    SqlCommand command = new SqlCommand(storedProcedureName, connection)
+                    SqlCommand command = new SqlCommand("GetProductCategory", connection)
                     {
                         CommandType = CommandType.StoredProcedure
                     };

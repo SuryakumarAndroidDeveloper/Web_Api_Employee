@@ -13,10 +13,9 @@ namespace Ecommerce_WebApi_Application.Controllers
     {
         public readonly IConfiguration _configuration;
         public readonly WishListDAL _wishlistDAL;
-        public WishListController(IConfiguration configuration)
+        public WishListController(IConfiguration configuration,WishListDAL wishListDAL)
         {
-            _configuration = configuration;
-            _wishlistDAL = new WishListDAL(configuration);
+            _wishlistDAL = wishListDAL; 
 
         }
 
@@ -47,6 +46,10 @@ namespace Ecommerce_WebApi_Application.Controllers
         [Route("GetWishListByCustomer")]
         public IActionResult GetWishListByCustomer(int customerId)
         {
+            if (customerId == 0 || customerId < 0)
+            {
+                return BadRequest("CustomerId is NotFound");
+            }
             List<MyWishlistModel> customerOrder = _wishlistDAL.GetWishListByCustomer(customerId);
 
             if (customerOrder.Count > 0)
@@ -57,7 +60,7 @@ namespace Ecommerce_WebApi_Application.Controllers
             }
             else
             {
-                return NotFound("No order found.");
+                return NotFound("No Wishlist found.");
             }
 
         }

@@ -13,10 +13,9 @@ namespace Ecommerce_WebApi_Application.Controllers
         public readonly IConfiguration _configuration;
         public readonly OrderDAL _orderDAL;
 
-        public OrderController(IConfiguration configuration)
+        public OrderController(IConfiguration configuration,OrderDAL orderDAL)
         {
-            _configuration = configuration;
-            _orderDAL = new OrderDAL(configuration);
+            _orderDAL = orderDAL;
 
         }
 
@@ -93,6 +92,10 @@ namespace Ecommerce_WebApi_Application.Controllers
         [Route("GetOrderByCustomer")]
         public IActionResult GetOrderByCustomer(int customerId)
         {
+            if (customerId==0 || customerId < 0)
+            {
+                return BadRequest("Failed to load order.");
+            }
             List<MyOrderModel> customerOrder = _orderDAL.GetOrderByCustomerId(customerId);
 
             if (customerOrder.Count > 0)

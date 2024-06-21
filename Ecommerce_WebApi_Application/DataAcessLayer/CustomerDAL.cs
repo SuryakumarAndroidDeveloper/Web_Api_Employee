@@ -119,7 +119,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@Customer_Id", id);
 
-                        connection.OpenAsync();
+                        connection.Open();
                         SqlDataReader reader = await cmd.ExecuteReaderAsync();
 
                         if (await reader.ReadAsync())

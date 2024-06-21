@@ -14,10 +14,9 @@ namespace Ecommerce_WebApi_Application.Controllers
         public readonly IConfiguration _configuration;
         public readonly CartDAL _cartDAL;
 
-        public CartController(IConfiguration configuration)
+        public CartController(IConfiguration configuration,CartDAL cartDAL)
         {
-            _configuration = configuration;
-            _cartDAL = new CartDAL(configuration);
+           _cartDAL = cartDAL;
 
         }
 
@@ -31,6 +30,9 @@ namespace Ecommerce_WebApi_Application.Controllers
             {
                 return BadRequest("cartItem are required.");
             }
+            if(cartItem.Product_Id <0) {
+                return BadRequest("Add cartItem Failed.");
+            }
 
             bool isSuccess = await _cartDAL.AddToCart(cartItem);
 
@@ -40,25 +42,29 @@ namespace Ecommerce_WebApi_Application.Controllers
             }
             else
             {
-                return StatusCode(500, "Internal server error: Failed to update  cartItem.");
+                return StatusCode(500, "Internal server error: Failed to update cartItem.");
             }
         }
         //get the cartitems based on customerid
         [HttpGet]
         [Route("GetCartByCustomer")]
-        public String GetCartByCustomer(int customerId)
+        public IActionResult GetCartByCustomer(int customerId)
         {
+            if(customerId <= 0)
+            {
+                return BadRequest("Failed to load Cart.");
+            }
             List<DisplayCartModel> customerCart = _cartDAL.GetCartByCustomerId(customerId);
 
             if (customerCart.Count > 0)
             {
 
-                return JsonConvert.SerializeObject(customerCart);
+                return Ok(customerCart);
 
             }
             else
             {
-                return "No cart found.";
+                return NotFound("No cart found.");
             }
 
         }
@@ -68,6 +74,13 @@ namespace Ecommerce_WebApi_Application.Controllers
         [Route("UpdateCartItemQuantity")]
         public IActionResult UpdateCartItemQuantity([FromBody] UpdateCartItemQuantityModel model)
         {
+            if (model==null) {
+                return BadRequest("Failed");
+            }
+            if (model.NewQuantity < 0)
+            {
+                return BadRequest("Failed to update quantity.");
+            }
             bool isUpdated = _cartDAL.UpdateCartItemQuantity(model.CartItemId, model.NewQuantity);
 
             if (isUpdated)
@@ -85,6 +98,10 @@ namespace Ecommerce_WebApi_Application.Controllers
         [Route("DeleteCartItem")]
         public IActionResult DeleteCartItem(int cartItemId)
         {
+            if (cartItemId <= 0)
+            {
+                return BadRequest("Failed to found item.");
+            }
             bool isDeleted = _cartDAL.DeleteCartItem(cartItemId);
 
             if (isDeleted)
