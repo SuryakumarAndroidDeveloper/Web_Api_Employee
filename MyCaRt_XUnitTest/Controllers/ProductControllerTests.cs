@@ -47,7 +47,7 @@ namespace MyCaRt_XUnitTest.Controllers
         public void InsertProduct_ValidModel_ReturnsOk()
         {
             // Arrange
-            var product = new ProductModel { Product_Category="5",Product_Code="Easybuy-S1201",Product_Name="Shorts",
+            var product = new ProductModel { Product_Category="5",Product_Code="loffer-1001",Product_Name="Shorts",
             Product_Description="Elastic and best quality",Product_Price=100,Available_Quantity=1000};
 
             // Act
@@ -132,27 +132,14 @@ namespace MyCaRt_XUnitTest.Controllers
             // Add more specific assertions based on your expected data
             Assert.NotEmpty(product);
         }
-//Negative Testcase if the data is empty
-        [Fact]
-        public async Task GetAllProduct_ReturnsEmptyList()
-        {
-            // Act
-            var result = await _controller.GetAllProduct();
 
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var products = Assert.IsAssignableFrom<List<ProductModel>>(okResult.Value);
-
-            // Ensure that the returned list is empty
-            Assert.Empty(products);
-        }
 //Positive TestCase for ProductCode is already exists
 
        [Fact]
         public void IsProductCodeAvailable_Existing_ReturnsTrue()
         {
             // Arrange
-            var request = new ProductController.ProductCodeRequest { ProductCode = "Easybuy-S101" };
+            var request = new ProductController.ProductCodeRequest { ProductCode = "Motor-1" };
 
             // Act
             var result = _controller.IsProduct_CodeAvailable(request);

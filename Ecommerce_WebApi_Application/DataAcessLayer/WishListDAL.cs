@@ -17,7 +17,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
 
         //Add the product to wishlist based on the customer_FName method
 
-        public async Task<bool> AddToWishList(CartItemModel cartItem)
+        public async Task<string> AddToWishList(CartItemModel cartItem)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
 
                         cmd.Parameters.AddWithValue("@Customer_FName", cartItem.Customer_FName);
 
-                        cmd.Parameters.AddWithValue("@Quantity", cartItem.Quantity);
+                      //  cmd.Parameters.AddWithValue("@Quantity", cartItem.Quantity);
 
 
 
@@ -42,11 +42,15 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                     }
                 }
 
-                return true;
+                return "Success";
+            }
+            catch (SqlException ex) when (ex.Message.Contains("This product is already in your wishlist."))
+            {
+                return "AlreadyExists";
             }
             catch
             {
-                return false;
+                return "Error";
             }
         }
 

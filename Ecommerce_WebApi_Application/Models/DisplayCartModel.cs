@@ -14,6 +14,8 @@ namespace Ecommerce_WebApi_Application.Models
 
         public string? Product_Name { get; set; }
 
+        public int? Available_Quantity { get; set; }
+
         public int? Quantity { get; set; }
 
 

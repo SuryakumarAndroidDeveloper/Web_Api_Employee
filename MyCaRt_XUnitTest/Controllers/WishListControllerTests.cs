@@ -50,8 +50,8 @@ namespace MyCaRt_XUnitTest.Controllers
             var cartItem = new CartItemModel
             {
                 Product_Id = 1, // Ensure this product exists in the database
-                Customer_FName = "2",
-                Quantity = 5
+                Customer_FName = "2"
+                
             };
 
             // Act
@@ -63,7 +63,7 @@ namespace MyCaRt_XUnitTest.Controllers
 
         }
 
- //Negative Test Case: Null CartItem
+//Negative Test Case: Null CartItem
         [Fact]
         public async Task AddToWishList_NullCartItem_ReturnsBadRequest()
         {
@@ -88,7 +88,6 @@ namespace MyCaRt_XUnitTest.Controllers
             {
                 Product_Id = -1, 
                 Customer_FName = "John",
-                Quantity = 1
             };
 
             // Act

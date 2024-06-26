@@ -39,7 +39,7 @@ namespace Ecommerce_WebApi_Application.Controllers
                 }
 
                 // Call the DAL method to place the order
-                bool isOrderPlaced = await _orderDAL.PlaceOrder(orderRequest.Customer_Id, allOrderProducts);
+                bool isOrderPlaced = await _orderDAL.PlaceOrder(orderRequest.Customer_Id,orderRequest.PaymentId, allOrderProducts);
 
                 if (isOrderPlaced)
                 {
@@ -92,7 +92,7 @@ namespace Ecommerce_WebApi_Application.Controllers
         [Route("GetOrderByCustomer")]
         public IActionResult GetOrderByCustomer(int customerId)
         {
-            if (customerId==0 || customerId < 0)
+            if (customerId==0 )
             {
                 return BadRequest("Failed to load order.");
             }

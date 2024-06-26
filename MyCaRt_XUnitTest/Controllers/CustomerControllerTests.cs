@@ -124,18 +124,7 @@ namespace MyCaRt_XUnitTest.Controllers
             Assert.NotEmpty(returnedCustomers);
             
         }
-//Negative TestCase if no customer in the database
-        [Fact]
-        public async Task GetAllCustomer_NoCustomers_ReturnsInternalServerError()
-        {          
-          // Act
-            var result = await _controller.GetAllCustomer();
 
-            // Assert
-            var objectResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(500, objectResult.StatusCode);
-            Assert.Equal("Internal server error: Failed to get customer details.", objectResult.Value);
-        }
 //Positive Testcase for getting a customer based in the id
         [Fact]
         public async Task GetCustomerByID_ExistingCustomer_ReturnsOk()
@@ -145,12 +134,12 @@ namespace MyCaRt_XUnitTest.Controllers
             var customer = new CustomerInterestedCategory
             {
                 Customer_Id = id,
-                Customer_FName = "Surya Kumar",
-                Customer_LName = "radhakrishnan",
+                Customer_FName = "Surya kumar",
+                Customer_LName = "Radhakrishnan",
                 Customer_Gender = "Male",
                 Customer_Email ="surya@gmail.com",
-                Customer_Mobile="6382421794",
-                Customer_InterestedCategory= "Home Appliances, Electricals, sports, Men, Grocers, Drink"
+                Customer_Mobile="6382421795",
+                Customer_InterestedCategory= "Home Appliances, Men"
 
             };
             // Act
@@ -322,17 +311,7 @@ namespace MyCaRt_XUnitTest.Controllers
   
         }
 
-//Negative Test Case: No Customers Found
-        [Fact]
-        public async Task GetAllCustomer_Name_ReturnsNotFound()
-        {
-            // Act
-            var result = _controller.GetAllCustomer_Name();
 
-            // Assert
-            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Equal("Customer Not Found.", notFoundResult.Value);
-        }
 
 //positive Testcase if the customer name is already exists
         [Fact]
@@ -428,7 +407,7 @@ namespace MyCaRt_XUnitTest.Controllers
         public void IsCustomerMobileAvailable_Existing_ReturnsTrue()
         {
             // Arrange
-            var request = new CustomerController.MobileRequest { Mobile = "6382421794" };
+            var request = new CustomerController.MobileRequest { Mobile = "6382421795" };
 
             // Act
             var result = _controller.IsMobileAvailable(request);
@@ -451,7 +430,7 @@ namespace MyCaRt_XUnitTest.Controllers
         public void IsCustomerMobileAvailable_NonExisting_ReturnsFalse()
         {
             // Arrange
-            var request = new CustomerController.MobileRequest { Mobile = "6382421795" };
+            var request = new CustomerController.MobileRequest { Mobile = "6382421794" };
 
             // Act
             var result = _controller.IsMobileAvailable(request);

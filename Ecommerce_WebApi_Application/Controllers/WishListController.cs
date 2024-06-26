@@ -29,11 +29,16 @@ namespace Ecommerce_WebApi_Application.Controllers
                 return BadRequest("cartItem are required.");
             }
 
-            bool isSuccess = await _wishlistDAL.AddToWishList(cartItem);
+            string isSuccess = await _wishlistDAL.AddToWishList(cartItem);
 
-            if (isSuccess)
+            if (isSuccess == "Success")
             {
-                return Ok("cartItem updated successfully.");
+                //return Ok("cartItem updated successfully.");
+                return Ok(new { success = true });
+            }
+            else if (isSuccess == "AlreadyExists")
+            {
+                return Ok(new { success = false, message = "This product is already in your wishlist." });
             }
             else
             {

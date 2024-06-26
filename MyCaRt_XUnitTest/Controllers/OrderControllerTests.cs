@@ -132,7 +132,7 @@ namespace MyCaRt_XUnitTest.Controllers
         public void GetOrderByCustomer_NoOrders_ReturnsNotFound()
         {
             // Arrange
-            int validCustomerIdWithNoOrders = 2; 
+            int validCustomerIdWithNoOrders = -1; 
 
             // Act
             var result = _controller.GetOrderByCustomer(validCustomerIdWithNoOrders);

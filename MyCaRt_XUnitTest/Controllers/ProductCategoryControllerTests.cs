@@ -50,7 +50,7 @@ namespace MyCaRt_XUnitTest.Controllers
         {
             // Arrange
             //string Category_Name = "Test Category" ;
-            var productCategory = new ProductCategoryModel { Category_Name = "Test Category12345" };
+            var productCategory = new ProductCategoryModel { Category_Name = "Womens FaceWash" };
 
             // Act
             var result = _controller.InsertProductCategory(productCategory);

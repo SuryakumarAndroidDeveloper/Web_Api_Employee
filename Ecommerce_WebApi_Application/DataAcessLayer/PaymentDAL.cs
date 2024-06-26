@@ -16,7 +16,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
             _connectionString = _configuration.GetConnectionString("DefaultConnection");
         }
 
-        public async Task<bool> StorePaymentData(PaymentModel paymentModel)
+        public async Task<int?> StorePaymentData(PaymentModel paymentModel)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                     using (SqlCommand command = new SqlCommand("StorePaymentData", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("@CustomerId", paymentModel.CustomerId);
+                        //command.Parameters.AddWithValue("@CustomerId", paymentModel.CustomerId);
                         command.Parameters.AddWithValue("@FullName", paymentModel.FullName);
                         command.Parameters.AddWithValue("@Email", paymentModel.Email);
                         command.Parameters.AddWithValue("@Address", paymentModel.Address);
@@ -38,10 +38,20 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                         command.Parameters.AddWithValue("@ExpYear", paymentModel.ExpYear);
                         command.Parameters.AddWithValue("@CVV", paymentModel.CVV);
 
+                        // Add an output parameter to capture the paymentId
+                        SqlParameter outputIdParam = new SqlParameter("@PaymentId", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        command.Parameters.Add(outputIdParam);
                         await connection.OpenAsync();
-                        var result = await command.ExecuteNonQueryAsync();
+                        await command.ExecuteNonQueryAsync();
+                        //var result = await command.ExecuteNonQueryAsync();
                         //return result > 0;
-                        return true;
+                        //return true;
+                        // Retrieve the paymentId
+                        int paymentId = (int)outputIdParam.Value;
+                        return paymentId;
                     }
                 }
             }
@@ -49,7 +59,8 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
             {
                 // Log the exception
                 Console.WriteLine("Error storing payment data: " + ex.Message);
-                return false;
+                // return false;
+                return null;
             }
         }
     }

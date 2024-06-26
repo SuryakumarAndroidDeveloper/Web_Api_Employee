@@ -16,7 +16,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
 
  //placeorder based on customerid
 
-        public async Task<bool> PlaceOrder(int customerId, List<OrderProduct> orderProducts)
+        public async Task<bool> PlaceOrder(int customerId,int paymentId ,List<OrderProduct> orderProducts)
         {
             var dt = new DataTable();
             dt.Columns.Add("ProductId", typeof(int));
@@ -37,6 +37,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@CustomerId", customerId);
+                        cmd.Parameters.AddWithValue("@PaymentId", paymentId);
                         var tableParam = cmd.Parameters.AddWithValue("@Products", dt);
                         tableParam.SqlDbType = SqlDbType.Structured;
                         tableParam.TypeName = "dbo.OrderProductType";

@@ -14,6 +14,8 @@
     }*/
     {
         public int Customer_Id { get; set; }
+
+        public int PaymentId {  get; set; }    
     public List<OrderProduct> OrderProducts { get; set; }
 }
 

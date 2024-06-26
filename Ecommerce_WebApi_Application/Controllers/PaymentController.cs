@@ -28,11 +28,12 @@ namespace Ecommerce_WebApi_Application.Controllers
             }
             try
             {
-                var isStored = await _paymentDAL.StorePaymentData(paymentModel);
+                var paymentId = await _paymentDAL.StorePaymentData(paymentModel);
 
-                if (isStored)
+                if (paymentId.HasValue)
                 {
-                    return Ok("Payment stored successfully!");
+                    // return Ok("Payment stored successfully!");
+                    return Ok(new { PaymentId = paymentId.Value });
                 }
                 else
                 {

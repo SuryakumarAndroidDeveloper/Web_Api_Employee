@@ -15,7 +15,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
         }
 
 //Insert the productCategory to db
-        public bool InsertProductCategory(ProductCategoryModel productCategory)
+        public bool InsertProductCategory(ProductCategoryModel productCategory, out string errorMessage)
         {
             using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
@@ -24,10 +24,22 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Category_Name", productCategory.Category_Name);
 
-                    connection.Open();
-                    int rowsAffected = cmd.ExecuteNonQuery();
 
-                    return rowsAffected > 0;
+                    var returnParameter = cmd.Parameters.Add("@ReturnVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    int result = (int)returnParameter.Value;
+
+                    if (result == -1)
+                    {
+                        errorMessage = "Category name already exists.";
+                        return false;
+                    }
+
+                    errorMessage = null;
+                    return result == 0;
                 }
             }
         }
@@ -77,7 +89,9 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
 
             return productCategories;
         }
-        public bool IsCategory_NameAvailable(string categoryName)
+
+
+/*        public bool IsCategory_NameAvailable(string categoryName)
         {
             using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
@@ -92,7 +106,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                     return count > 0; // Return true if the category name exists
                 }
             }
-        }
+        }*/
 
 
 

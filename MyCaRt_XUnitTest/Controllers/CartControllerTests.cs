@@ -169,8 +169,8 @@ namespace MyCaRt_XUnitTest.Controllers
             // Arrange
             var validModel = new UpdateCartItemQuantityModel
             {
-                CartItemId = 203,
-                NewQuantity = 17
+                CartItemId = 17,
+                NewQuantity = 10
             };
 
             // Act
@@ -238,7 +238,7 @@ namespace MyCaRt_XUnitTest.Controllers
         public void DeleteCartItem_ValidCartItemId_ReturnsOk()
         {
             // Arrange
-            var validCartItemId = 206;  
+            var validCartItemId = 16;  
 
             // Act
             var result = _controller.DeleteCartItem(validCartItemId);

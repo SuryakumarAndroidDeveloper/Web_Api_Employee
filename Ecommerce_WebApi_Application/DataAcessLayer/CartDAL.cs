@@ -73,6 +73,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                         Product_Id = Convert.ToInt32(reader["Product_Id"]),
                         Product_Name = reader["Product_Name"].ToString(),
                         //Customer_FName = reader["Customer_FName"].ToString(),
+                        Available_Quantity = Convert.ToInt32(reader["Available_Quantity"]),
                         Quantity = Convert.ToInt32(reader["Quantity"]),
                         Product_Price = Convert.ToDecimal(reader["Product_Price"])
 

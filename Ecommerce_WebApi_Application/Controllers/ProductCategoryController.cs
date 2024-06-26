@@ -39,23 +39,17 @@ namespace Ecommerce_WebApi_Application.Controllers
             {
                 return BadRequest("Failed to insert ProductCategory.");
             }
-            if (_productcategoryDAL.IsCategory_NameAvailable(productCategory.Category_Name))
+
+            string errorMessage;
+            bool isInserted = _productcategoryDAL.InsertProductCategory(productCategory, out errorMessage);
+
+            if (isInserted)
             {
-                return BadRequest("Failed to insert ProductCategory.");
+                return Ok("ProductCategory inserted successfully.");
             }
             else
             {
-                bool isInserted = _productcategoryDAL.InsertProductCategory(productCategory);
-
-                if (isInserted)
-                {
-                    return Ok("ProductCategory inserted successfully.");
-                }
-                else
-                {
-                    return BadRequest("Failed to insert ProductCategory.");
-                }
-             
+                return BadRequest(errorMessage);
             }
         }
 
@@ -94,7 +88,7 @@ namespace Ecommerce_WebApi_Application.Controllers
             }
         }
 
-        [HttpPost]
+/*        [HttpPost]
         [Route("IsCategory_NameAvailable")]
         public IActionResult IsCategory_NameAvailable([FromBody] CategoryNameRequest request)
         {
@@ -115,7 +109,7 @@ namespace Ecommerce_WebApi_Application.Controllers
         public class CategoryNameRequest
         {
             public string CategoryName { get; set; }
-        }
+        }*/
 
 
     }
