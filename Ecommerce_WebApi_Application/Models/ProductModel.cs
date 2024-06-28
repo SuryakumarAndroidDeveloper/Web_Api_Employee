@@ -15,7 +15,8 @@
         public string? Product_Description { get; set; }
 
         public int? Available_Quantity { get; set; }
-
+        public string? FilePath { get; set; }
+        public string? ImageName { get; set; }
 
 
     }

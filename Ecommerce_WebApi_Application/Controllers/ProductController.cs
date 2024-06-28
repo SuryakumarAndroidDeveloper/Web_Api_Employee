@@ -1,6 +1,7 @@
 ﻿using Ecommerce_WebApi_Application.DataAcessLayer;
 using Ecommerce_WebApi_Application.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data.SqlClient;
 
 namespace Ecommerce_WebApi_Application.Controllers
@@ -26,8 +27,9 @@ namespace Ecommerce_WebApi_Application.Controllers
 
         [HttpPost]
         [Route("InsertProduct_Details")]
-        public IActionResult InsertProduct_Details(ProductModel product)
+        public async Task<IActionResult> InsertProduct_Details([FromBody] ProductModel product)
         {
+
             if (product == null || 
                 string.IsNullOrWhiteSpace(product.Product_Category) ||
                 string.IsNullOrWhiteSpace(product.Product_Code) ||
@@ -42,11 +44,9 @@ namespace Ecommerce_WebApi_Application.Controllers
             {
                 return BadRequest("Failed to Add Product.");
             }
-            if (_productDAL.IsProduct_CodeAvailable(product.Product_Code))
-            {
-                return BadRequest("Failed to Add Product.");
-            }
-            bool isInserted = _productDAL.InsertProduct_Details(product);
+           
+            string errorMessage;
+            bool isInserted = _productDAL.InsertProduct_Details(product, out errorMessage);
 
             if (isInserted)
             {
@@ -54,7 +54,7 @@ namespace Ecommerce_WebApi_Application.Controllers
             }
             else
             {
-                return BadRequest("Failed to Add Product.");
+                return BadRequest(errorMessage);
             }
         }
 
@@ -93,31 +93,6 @@ namespace Ecommerce_WebApi_Application.Controllers
                 return StatusCode(500, $"Error: {ex.Message}");
             }
         }
-        //validate product code
-
-        [HttpPost]
-        [Route("IsProduct_CodeAvailable")]
-        public IActionResult IsProduct_CodeAvailable([FromBody] ProductCodeRequest request)
-        {
-            bool isAvailable = _productDAL.IsProduct_CodeAvailable(request.ProductCode);
-
-            if (isAvailable)
-            {
-                return Ok(new { Exists = isAvailable });
-            }
-            else
-            {
-                return BadRequest(new { Exists = isAvailable });
-            }
-        }
-
-        public class ProductCodeRequest
-        {
-            public string ProductCode { get; set; }
-        }
-
-
-
 
 
 

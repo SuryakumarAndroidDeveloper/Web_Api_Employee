@@ -20,8 +20,9 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
 
 
 
-        public bool InsertProduct_Details(ProductModel product)
+        public bool InsertProduct_Details(ProductModel product, out string errorMessage)
         {
+            errorMessage = null;
             using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
                 using (SqlCommand cmd = new SqlCommand("InsertProductDetails", connection))
@@ -33,12 +34,28 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                     cmd.Parameters.AddWithValue("@Product_Price", product.Product_Price);
                     cmd.Parameters.AddWithValue("@Product_Description", product.Product_Description);
                     cmd.Parameters.AddWithValue("@Available_Quantity", product.Available_Quantity);
+                    cmd.Parameters.AddWithValue("@FilePath", product.FilePath ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@ImageName", product.ImageName ?? (object)DBNull.Value);
 
+                    try
+                    {
+                        connection.Open();
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
 
-                    connection.Open();
-                    int rowsAffected = cmd.ExecuteNonQuery();
-
-                    return rowsAffected > 0;
+                    catch (SqlException ex)
+                    {
+                        if (ex.Message.Contains("Product code already exists."))
+                        {
+                            errorMessage = "Product code already exists.";
+                        }
+                        else
+                        {
+                            errorMessage = "An error occurred while inserting the product details.";
+                        }
+                        return false;
+                    }
                 }
             }
         }
@@ -70,6 +87,8 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                                 Product_Price = Convert.ToDecimal(reader["Product_Price"]),
                                 Product_Description = reader["Product_Description"].ToString(),
                                 Available_Quantity = Convert.ToInt32(reader["Available_Quantity"]),
+                                FilePath = reader["FilePath"].ToString(),
+                                ImageName = reader["ImageName"].ToString(),
                             };
                             products.Add(product);
                         }
@@ -92,27 +111,6 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
 
             return products;
         }
-
-
-
-
-        public bool IsProduct_CodeAvailable(string productCode)
-        {
-            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                using (SqlCommand cmd = new SqlCommand("CheckProduct_Code", connection))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Product_Code", productCode);
-
-                    connection.Open();
-                    int count = (int)cmd.ExecuteScalar(); // Use ExecuteScalar to get the count result
-
-                    return count > 0; // Return true if the category name exists
-                }
-            }
-        }
-
 
     }
 

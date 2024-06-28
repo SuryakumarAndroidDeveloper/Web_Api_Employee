@@ -13,8 +13,9 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
             _configuration = configuration;
         }
         //Insert the CustomerDetails to DB
-        public async Task<bool> InsertCustomerDetailsAsync(CustomerModel customerDetails)
+        public bool InsertCustomerDetailsAsync(CustomerModel customerDetails, out string errorMessage)
         {
+            errorMessage = null;
             try
             {
                 using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
@@ -49,18 +50,50 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
 
                         cmd.Parameters.Add(tvpParam);
 
-                        connection.Open();
-                        await cmd.ExecuteNonQueryAsync();
+                        // Output parameter for error message
+                        SqlParameter errorMessageParam = new SqlParameter
+                        {
+                            ParameterName = "@ErrorMessage",
+                            SqlDbType = SqlDbType.NVarChar,
+                            Size = 500,
+                            Direction = ParameterDirection.Output
+                        };
+
+                        cmd.Parameters.Add(errorMessageParam);
+
+                        try
+                        {
+                            connection.Open();
+                            cmd.ExecuteNonQuery();
+                        }
+                        catch (SqlException ex){
+                            // Check if there are any error messages
+                            if (errorMessageParam.Value != DBNull.Value)
+                            {
+                                errorMessage = errorMessageParam.Value.ToString().Trim();
+                                return false; // Return false indicating failure
+                            }
+
+                            // Log the SQL exception or handle it as per your application's requirements
+                            Console.WriteLine($"SQL Exception in InsertCustomerDetailsAsync: {ex.Message}");
+                            return false;
+            }
+
+           
                     }
                 }
 
-                return true;
+                return true; // Return true indicating success
             }
-            catch
+       
+            catch (Exception ex)
             {
+                // Log the exception or handle it as per your application's requirements
+                Console.WriteLine($"Exception in InsertCustomerDetailsAsync: {ex.Message}");
                 return false;
             }
         }
+
 
         //GetAllCustomer DAL Method from DB
 
@@ -253,56 +286,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
 
             return customer_Name;
         }
-        public bool IsCustomer_FNameAvailable(string customerFName)
-        {
-            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                using (SqlCommand cmd = new SqlCommand("CheckCustomer_FName", connection))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Customer_FName", customerFName);
 
-                    connection.Open();
-                    int count = (int)cmd.ExecuteScalar(); // Use ExecuteScalar to get the count result
-
-                    return count > 0; // Return true if the category name exists
-                }
-            }
-        }
-
-        public bool IsEmailAvailable(string email)
-        {
-            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                using (SqlCommand cmd = new SqlCommand("CheckCustomer_Email", connection))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Customer_Email", email);
-
-                    connection.Open();
-                    int count = (int)cmd.ExecuteScalar(); // Use ExecuteScalar to get the count result
-
-                    return count > 0; // Return true if the category name exists
-                }
-            }
-        }
-
-        public bool IsMobileAvailable(string mobile)
-        {
-            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                using (SqlCommand cmd = new SqlCommand("CheckCustomer_Mobile", connection))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Customer_Mobile", mobile);
-
-                    connection.Open();
-                    int count = (int)cmd.ExecuteScalar(); // Use ExecuteScalar to get the count result
-
-                    return count > 0; // Return true if the category name exists
-                }
-            }
-        }
 
 
 

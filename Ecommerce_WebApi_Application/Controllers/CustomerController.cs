@@ -23,9 +23,10 @@ namespace Ecommerce_WebApi_Application.Controllers
 
         [HttpPost]
         [Route("InsertCustomerDetails")]
-        public async Task<IActionResult> InsertCustomerDetails([FromBody] CustomerModel customerDetails)
+        public IActionResult InsertCustomerDetails([FromBody] CustomerModel customerDetails)
         {
-            bool isSuccess = await _customerDAL.InsertCustomerDetailsAsync(customerDetails);
+            string errorMessage;
+            bool isSuccess = _customerDAL.InsertCustomerDetailsAsync(customerDetails, out errorMessage);
 
             if (isSuccess)
             {
@@ -33,9 +34,10 @@ namespace Ecommerce_WebApi_Application.Controllers
             }
             else
             {
-                return StatusCode(500, "Internal server error: Failed to insert customer details.");
+                return BadRequest(errorMessage); // Return concatenated error message
             }
         }
+
         //GetAllcustomer method
 
         [HttpGet]
@@ -145,69 +147,8 @@ namespace Ecommerce_WebApi_Application.Controllers
             }
 
         }
-        //validate customer name
-        [HttpPost]
-        [Route("IsCustomer_FNameAvailable")]
-        public IActionResult IsCustomer_FNameAvailable([FromBody] CustomerNameRequest request)
-        {
-            bool isAvailable = _customerDAL.IsCustomer_FNameAvailable(request.Customer_FName);
 
-            if (isAvailable)
-            {
-                return Ok(new { Exists = isAvailable });
-            }
-            else
-            {
-                return BadRequest(new { Exists = isAvailable });
-            }
-        }
 
-        public class CustomerNameRequest
-        {
-            public string Customer_FName { get; set; }
-        }
-        //validate email
-        [HttpPost]
-        [Route("IsEmailAvailable")]
-        public IActionResult IsEmailAvailable([FromBody] EmailRequest request)
-        {
-            bool isAvailable = _customerDAL.IsEmailAvailable(request.Email);
-
-            if (isAvailable)
-            {
-                return Ok(new { Exists = isAvailable });
-            }
-            else
-            {
-                return BadRequest(new { Exists = isAvailable });
-            }
-        }
-
-        public class EmailRequest
-        {
-            public string Email { get; set; }
-        }
-        //validate mobile number
-        [HttpPost]
-        [Route("IsMobileAvailable")]
-        public IActionResult IsMobileAvailable([FromBody] MobileRequest request)
-        {
-            bool isAvailable = _customerDAL.IsMobileAvailable(request.Mobile);
-
-            if (isAvailable)
-            {
-                return Ok(new { Exists = isAvailable });
-            }
-            else
-            {
-                return BadRequest(new { Exists = isAvailable });
-            }
-        }
-
-        public class MobileRequest
-        {
-            public string Mobile { get; set; }
-        }
 
 
     }
