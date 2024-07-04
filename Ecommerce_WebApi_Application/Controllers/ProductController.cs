@@ -27,35 +27,38 @@ namespace Ecommerce_WebApi_Application.Controllers
 
         [HttpPost]
         [Route("InsertProduct_Details")]
-        public async Task<IActionResult> InsertProduct_Details([FromBody] ProductModel product)
+        public async Task<IActionResult> InsertProduct_Details([FromBody] List<ProductModel> products)
         {
+            if (products == null || !products.Any())
+            {
+                return BadRequest("No products to add.");
+            }
+            foreach (var product in products)
+            {
+                if (string.IsNullOrWhiteSpace(product.Product_Category) ||
+                    string.IsNullOrWhiteSpace(product.Product_Code) ||
+                    string.IsNullOrWhiteSpace(product.Product_Name) ||
+                    string.IsNullOrWhiteSpace(product.Product_Price.ToString()) ||
+                    string.IsNullOrWhiteSpace(product.Available_Quantity.ToString()) ||
+                    string.IsNullOrWhiteSpace(product.Product_Description))
+                {
+                    return BadRequest("Failed to add product.");
+                }
+                if (product.Product_Price < 0 || product.Available_Quantity < 0)
+                {
+                    return BadRequest("Failed to add product.");
+                }
 
-            if (product == null || 
-                string.IsNullOrWhiteSpace(product.Product_Category) ||
-                string.IsNullOrWhiteSpace(product.Product_Code) ||
-                string.IsNullOrWhiteSpace(product.Product_Name) ||
-                string.IsNullOrWhiteSpace(product.Product_Price.ToString())||
-                string.IsNullOrWhiteSpace(product.Available_Quantity.ToString())||
-                string.IsNullOrWhiteSpace(product.Product_Description))
-            {
-                return BadRequest("Failed to Add Product.");
-            }
-            if (product.Product_Price < 0 || product.Available_Quantity < 0)
-            {
-                return BadRequest("Failed to Add Product.");
-            }
-           
-            string errorMessage;
-            bool isInserted = _productDAL.InsertProduct_Details(product, out errorMessage);
+                string errorMessage;
+                bool isInserted = _productDAL.InsertProduct_Details(product, out errorMessage);
 
-            if (isInserted)
-            {
-                return Ok("Product Added successfully.");
+                if (!isInserted)
+                {
+                    return BadRequest(errorMessage);
+                }
             }
-            else
-            {
-                return BadRequest(errorMessage);
-            }
+
+            return Ok("Products added successfully.");
         }
 
 
