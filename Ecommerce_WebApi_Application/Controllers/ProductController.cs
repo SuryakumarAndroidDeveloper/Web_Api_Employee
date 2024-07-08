@@ -60,9 +60,17 @@ namespace Ecommerce_WebApi_Application.Controllers
 
             return Ok("Products added successfully.");
         }
+        //check the productcode is already exists
+  /*      [HttpGet]
+        [Route("CheckProductCodeExists")]
+        public async Task<IActionResult> CheckProductCodeExists(string productCode)
+        {
+            var exists = _productDAL.ProductCodeExists(productCode);
+          //var exists = _context.Products.Any(p => p.Product_Code == productCode);
+            return Ok(exists);
+        }*/
 
-
- //get all the product api
+        //get all the product api
 
         [HttpGet]
         [Route("GetAllProduct")]

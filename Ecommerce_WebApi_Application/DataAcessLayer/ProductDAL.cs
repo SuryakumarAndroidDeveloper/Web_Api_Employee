@@ -60,6 +60,23 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
             }
         }
 
+        //checking the productcode is laready existing
+/*        public bool ProductCodeExists(string productCode)
+        {
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                using (SqlCommand cmd = new SqlCommand("CheckProduct_Code", connection))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Product_Code", productCode);
+
+                    connection.Open();
+                    int count = (int)cmd.ExecuteScalar();
+
+                    return count > 0;
+                }
+            }
+        }*/
 
         public async Task<List<ProductModel>> GetAllProductAsync()
         {
