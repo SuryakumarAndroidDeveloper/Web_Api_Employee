@@ -23,6 +23,11 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
         public bool InsertProduct_Details(ProductModel product, out string errorMessage)
         {
             errorMessage = null;
+            if (IsProductCodeExists(product.Product_Code))
+            {
+                errorMessage = "Product code already exists.";
+                return false;
+            }
             using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
                 using (SqlCommand cmd = new SqlCommand("InsertProductDetails", connection))
@@ -60,8 +65,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
             }
         }
 
-        //checking the productcode is laready existing
-/*        public bool ProductCodeExists(string productCode)
+        public bool IsProductCodeExists(string productCode)
         {
             using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
@@ -76,7 +80,9 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                     return count > 0;
                 }
             }
-        }*/
+                throw new NotImplementedException();
+        }
+
 
         public async Task<List<ProductModel>> GetAllProductAsync()
         {

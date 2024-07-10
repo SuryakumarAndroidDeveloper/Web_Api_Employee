@@ -23,7 +23,7 @@ namespace Ecommerce_WebApi_Application.Controllers
         }
 
 
-//Insert the product details api
+        //Insert the product details api
 
         [HttpPost]
         [Route("InsertProduct_Details")]
@@ -33,9 +33,11 @@ namespace Ecommerce_WebApi_Application.Controllers
             {
                 return BadRequest("No products to add.");
             }
+            List<string> errorMessages = new List<string>();
+            List<ValidationError> errors = new List<ValidationError>();
             foreach (var product in products)
             {
-                if (string.IsNullOrWhiteSpace(product.Product_Category) ||
+               /* if (string.IsNullOrWhiteSpace(product.Product_Category) ||
                     string.IsNullOrWhiteSpace(product.Product_Code) ||
                     string.IsNullOrWhiteSpace(product.Product_Name) ||
                     string.IsNullOrWhiteSpace(product.Product_Price.ToString()) ||
@@ -43,32 +45,51 @@ namespace Ecommerce_WebApi_Application.Controllers
                     string.IsNullOrWhiteSpace(product.Product_Description))
                 {
                     return BadRequest("Failed to add product.");
-                }
+                }*/
                 if (product.Product_Price < 0 || product.Available_Quantity < 0)
                 {
                     return BadRequest("Failed to add product.");
                 }
 
                 string errorMessage;
+                // bool isInserted = _productDAL.InsertProduct_Details(product, out errorMessage);
+                bool isProductCodeExists = _productDAL.IsProductCodeExists(product.Product_Code);
+                if (isProductCodeExists)
+                {
+                    // return Ok(errorMessage);
+                    errors.Add(new ValidationError
+                    {
+                        Field = $"[{products.IndexOf(product)}].Product_Code",
+                        Error = "Product code already exists."
+                    });
+                }
+            }
+              if (errors.Any())
+               {
+                   return BadRequest(errors); // Return validation errors
+               }
+            foreach (var product in products)
+            {
+                // Insert each product into database
+                string errorMessage;
                 bool isInserted = _productDAL.InsertProduct_Details(product, out errorMessage);
 
                 if (!isInserted)
                 {
-                    return BadRequest(errorMessage);
+                    // Handle insertion failure if needed
+                    return BadRequest("Failed to insert products into the database.");
                 }
             }
-
             return Ok("Products added successfully.");
+               
         }
-        //check the productcode is already exists
-  /*      [HttpGet]
-        [Route("CheckProductCodeExists")]
-        public async Task<IActionResult> CheckProductCodeExists(string productCode)
+             public class ValidationError
         {
-            var exists = _productDAL.ProductCodeExists(productCode);
-          //var exists = _context.Products.Any(p => p.Product_Code == productCode);
-            return Ok(exists);
-        }*/
+            public string Field { get; set; }
+            public string Error { get; set; }
+        }
+    
+
 
         //get all the product api
 
