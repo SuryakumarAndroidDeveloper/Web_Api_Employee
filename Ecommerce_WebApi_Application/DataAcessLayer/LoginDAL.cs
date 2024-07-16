@@ -44,9 +44,11 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
             return message;
         }
         //login authentication
-        public string ExecuteUserAction(string email, string password)
+        public string ExecuteUserAction(string email, string password, out int role, out int uid)
         {
             string message = string.Empty;
+            role = -1; 
+            uid = -1;
             using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
                 using (SqlCommand cmd = new SqlCommand("UserLogin", con))
@@ -60,6 +62,8 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                     if (reader.Read())
                     {
                         string storedPassword = reader["Password"].ToString();
+                        role = (int)reader["Role"];
+                        uid = Convert.ToInt32(reader["Customer_Id"]);
                         if (EncryptionHelper.Compare(password, storedPassword))
                         {
                             message = "Login successful";
@@ -71,7 +75,7 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                     }
                     else
                     {
-                        message = "error in login please try later";
+                        message = "Account not Exists Please signup to login!";
                     }
                     con.Close();
                 }

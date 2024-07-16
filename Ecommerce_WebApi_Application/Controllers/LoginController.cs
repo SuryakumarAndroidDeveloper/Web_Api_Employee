@@ -1,6 +1,7 @@
 ﻿using Ecommerce_WebApi_Application.DataAcessLayer;
 using Ecommerce_WebApi_Application.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace Ecommerce_WebApi_Application.Controllers
 {
@@ -40,13 +41,12 @@ namespace Ecommerce_WebApi_Application.Controllers
         public IActionResult Login(LoginModel model)
         {
             try
-            {
-          
-            string message = _loginDAL.ExecuteUserAction(model.Email, model.Password);
+            {         
+            string message = _loginDAL.ExecuteUserAction(model.Email, model.Password,out int role, out int uid);
             if (message == "Login successful")
             {
                 string sessionId = _loginDAL.GenerateSessionId();
-                return Ok(new { Message = message, SessionId = sessionId });
+                return Ok(new { Message = message, SessionId = sessionId, Role = role, Userid=uid });
             }
             return Ok(new { Message = message });
         }
