@@ -79,7 +79,9 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                         Quantity = Convert.ToInt32(reader["Quantity"]),
                         TotalPrice = reader["TotalPrice"] != DBNull.Value ? Convert.ToDecimal(reader["TotalPrice"]) : null,
                         OrderDate = reader["OrderDate"] != DBNull.Value ? Convert.ToDateTime(reader["OrderDate"]) : null,
-                        IsPaid = reader["IsPaid"].ToString()
+                        IsPaid = reader["IsPaid"].ToString(),
+                        DeliveryDate = reader["DeliveryDate"] != DBNull.Value ? Convert.ToDateTime(reader["DeliveryDate"]) : (DateTime?)null,
+                        DeliveryStatus = reader["DeliveryStatus"] != DBNull.Value ? reader["DeliveryStatus"].ToString() : null,
                     };
 
                     myOrders.Add(item);
@@ -89,6 +91,152 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
             }
 
             return myOrders;
+        }
+
+
+        //CancelOrderByID method
+
+        public async Task<bool> CancelOrderByIdAsync(int orderId)
+        {
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                SqlCommand command = new SqlCommand("CancelOrder", connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.AddWithValue("@Order_Id", orderId);
+
+                await connection.OpenAsync();
+                int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                return rowsAffected > 0;
+            }
+        }
+
+
+
+        //GetAllOrders DAL Method from DB
+
+        public async Task<List<ListOfOrdersModel>> GetAllOrdersAsync()
+        {
+            List<ListOfOrdersModel> orders = new List<ListOfOrdersModel>();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    using (SqlCommand cmd = new SqlCommand("GetAllOrders", connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await connection.OpenAsync();
+                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+                        while (await reader.ReadAsync())
+                        {
+                            ListOfOrdersModel order = new ListOfOrdersModel
+                            {
+                                //OrderDetailId = Convert.ToInt32(reader["OrderDetailId"]),
+                                OrderId = Convert.ToInt32(reader["OrderId"]),
+                                ProductId = Convert.ToInt32(reader["ProductId"]),
+                                Quantity = Convert.ToInt32(reader["Quantity"]),
+                                TotalPrice = reader["TotalPrice"] != DBNull.Value ? Convert.ToDecimal(reader["TotalPrice"]) : 0,
+                                OrderDate = reader["OrderDate"] != DBNull.Value ? Convert.ToDateTime(reader["OrderDate"]) : (DateTime?)null,
+                                IsPaid = reader["IsPaid"] != DBNull.Value ? reader["IsPaid"].ToString() : null,
+                                DeliveryDate = reader["DeliveryDate"] != DBNull.Value ? Convert.ToDateTime(reader["DeliveryDate"]) : (DateTime?)null,
+                                DeliveryStatus = reader["DeliveryStatus"] != DBNull.Value ? reader["DeliveryStatus"].ToString() : null,
+                            };
+                            orders.Add(order);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return orders;
+        }
+
+        //get the orderdetails based on the orderId
+
+        public async Task<ListOfOrdersModel> GetOrderByIdAsync(int orderId)
+        {
+            ListOfOrdersModel orderModel = null;
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    using (SqlCommand cmd = new SqlCommand("GetOrderDetailsByOrderId", connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@OrderId", orderId);
+
+                        connection.Open();
+                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+                        if (await reader.ReadAsync())
+                        {
+                            orderModel = new ListOfOrdersModel
+                            {
+                               // OrderDetailId = Convert.ToInt32(reader["OrderDetailId"]),
+                                OrderId = Convert.ToInt32(reader["OrderId"]),
+                                ProductId = Convert.ToInt32(reader["ProductId"]),
+                                Quantity = Convert.ToInt32(reader["Quantity"]),
+                                TotalPrice = reader["TotalPrice"] != DBNull.Value ? Convert.ToDecimal(reader["TotalPrice"]) : 0,
+                                OrderDate = reader["OrderDate"] != DBNull.Value ? Convert.ToDateTime(reader["OrderDate"]) : (DateTime?)null,
+                                IsPaid = reader["IsPaid"] != DBNull.Value ? reader["IsPaid"].ToString() : null,
+                                DeliveryDate = reader["DeliveryDate"] != DBNull.Value ? Convert.ToDateTime(reader["DeliveryDate"]) : (DateTime?)null,
+                                DeliveryStatus = reader["DeliveryStatus"] != DBNull.Value ? reader["DeliveryStatus"].ToString() : null,
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return orderModel;
+        }
+
+        //post the upodated order details based on the orderId
+
+
+        public async Task<bool> UpdateOrderDetailsAsync(int orderId, ListOfOrdersModel orderDetails)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    using (SqlCommand cmd = new SqlCommand("UpdateOrderDetailsByOrderID", connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        // Add parameters
+                        cmd.Parameters.AddWithValue("@OrderId", orderId);
+                        cmd.Parameters.AddWithValue("@ProductId", orderDetails.ProductId);
+                        cmd.Parameters.AddWithValue("@Quantity", orderDetails.Quantity);
+                        cmd.Parameters.AddWithValue("@TotalPrice", orderDetails.TotalPrice);
+                        cmd.Parameters.AddWithValue("@OrderDate", orderDetails.OrderDate);
+                        cmd.Parameters.AddWithValue("@IsPaid", orderDetails.IsPaid);
+                        cmd.Parameters.AddWithValue("@DeliveryDate", orderDetails.DeliveryDate ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@DeliveryStatus", orderDetails.DeliveryStatus ?? (object)DBNull.Value);
+
+                        connection.Open();
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
 

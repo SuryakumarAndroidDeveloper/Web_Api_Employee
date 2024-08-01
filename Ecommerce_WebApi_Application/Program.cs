@@ -1,4 +1,5 @@
 using Ecommerce_WebApi_Application.DataAcessLayer;
+using Ecommerce_WebApi_Application.Service;
 using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,7 @@ builder.Services.AddScoped<OrderDAL>();
 builder.Services.AddScoped<WishListDAL>();
 builder.Services.AddScoped<PaymentDAL>();
 builder.Services.AddScoped<LoginDAL>();
+//builder.Services.AddHostedService<OtpCleanupService>();
 
 
 

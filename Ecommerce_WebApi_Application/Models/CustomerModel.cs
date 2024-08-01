@@ -15,5 +15,8 @@
             SelectedAreas = new List<int>();
         }
 
+        public string? FilePath { get; set; }
+        public string? ImageName { get; set; }
+
     }
 }

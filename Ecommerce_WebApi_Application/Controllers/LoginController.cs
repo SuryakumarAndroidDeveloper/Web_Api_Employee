@@ -58,7 +58,61 @@ namespace Ecommerce_WebApi_Application.Controllers
 
 
 
+        [HttpPost("ForgetPassword")]
+        public IActionResult ForgetPassword(LoginModel model)
+        {
+            try
+            {
+                string message = _loginDAL.ExecuteForgetPasswordAction(model.Email, out string password);
+                if (message == "Password Found")
+                {
+                    return Ok(new { Message = message, Password = password });
+                }
+                return Ok(new { Message = message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+            }
 
+        [HttpPost]
+        [Route("SendResetPasswordLink")]
+        public async Task<IActionResult> SendResetPasswordLink([FromBody] OtpRequestModel model)
+        {
+            await  _loginDAL.SaveOtpRequestAsync(model.Email, model.Url);
+            return Ok("Reset password link has been saved successfully.");
+        }
+
+        [HttpGet("GetOtpRequest")]
+        public async Task<IActionResult> GetOtpRequest([FromQuery] string otpUrl)
+        {
+            var otpRequest = await _loginDAL.GetOtpRequestAsync(otpUrl);
+            if (otpRequest == null)
+            {
+                return NotFound(new { message = "OTP request not found or expired." });
+            }
+            return Ok(otpRequest);
+        }
+
+        [HttpPost]
+        [Route("ResetPassword")]
+        public IActionResult ResetPassword(ResetPasswordModel model)
+        {
+            try
+            {
+                string message = _loginDAL.ExecuteResetPasswordAction(model.Email, model.Password, model.CPassword);
+                if (message == "Password Updated Successfully")
+                {
+                    return Ok(new { Message = message });
+                }
+                return Ok(new { Message = message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
 
 

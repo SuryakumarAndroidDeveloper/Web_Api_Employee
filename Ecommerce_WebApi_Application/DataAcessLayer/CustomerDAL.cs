@@ -165,7 +165,9 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                                 Customer_Gender = reader["Customer_Gender"].ToString(),
                                 Customer_InterestedCategory = reader["Customer_InterestedCategory"].ToString(),
                                 Customer_Email = reader["Customer_Email"].ToString(),
-                                Customer_Mobile = reader["Customer_Mobile"].ToString()
+                                Customer_Mobile = reader["Customer_Mobile"].ToString(),
+                                FilePath = reader["FilePath"].ToString(),
+                                ImageName = reader["ImageName"].ToString()
                             };
                         }
                     }
@@ -198,6 +200,9 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
                         cmd.Parameters.AddWithValue("@Customer_Gender", customerDetails.Customer_Gender);
                         cmd.Parameters.AddWithValue("@Customer_Email", customerDetails.Customer_Email);
                         cmd.Parameters.AddWithValue("@Customer_Mobile", customerDetails.Customer_Mobile);
+                        cmd.Parameters.AddWithValue("@FilePath", customerDetails.FilePath ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@ImageName", customerDetails.ImageName ?? (object)DBNull.Value);
+
 
                         // Create DataTable for TVP
                         DataTable interestedCategoryTable = new DataTable();

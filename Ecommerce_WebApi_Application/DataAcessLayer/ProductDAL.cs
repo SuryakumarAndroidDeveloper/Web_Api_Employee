@@ -1,6 +1,7 @@
 ﻿using Ecommerce_WebApi_Application.Models;
 using Microsoft.Extensions.Configuration;
 using MyCaRt.Models;
+using Newtonsoft.Json;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -17,6 +18,22 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
 
 
 
+
+
+
+        public async Task InsertJsonDataToDatabase(IEnumerable<ProductModel> productList)
+        {
+            using (SqlConnection conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                using (SqlCommand cmd = new SqlCommand("InsertProductJsonData", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@JsonData", JsonConvert.SerializeObject(productList));
+                    await conn.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
 
 
 

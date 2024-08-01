@@ -10,6 +10,9 @@
         public string Customer_Mobile { get; set; }
 
         public string Customer_InterestedCategory { get; set; }
- 
+
+        public string? FilePath { get; set; }
+        public string? ImageName { get; set; }
+
     }
 }

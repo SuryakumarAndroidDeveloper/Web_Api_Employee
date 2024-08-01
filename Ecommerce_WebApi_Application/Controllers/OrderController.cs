@@ -111,6 +111,106 @@ namespace Ecommerce_WebApi_Application.Controllers
 
         }
 
+        //delete the customer details based on customerid (softdelete)
+
+        [HttpPost]
+        [Route("CancelOrderById")]
+        public async Task<IActionResult> CancelOrderById(int orderId)
+        {
+            if (orderId < 0 || orderId == 0)
+            {
+                return BadRequest("Failed to find the order");
+            }
+            try
+            {
+                bool isCanceled = await _orderDAL.CancelOrderByIdAsync(orderId);
+
+                if (isCanceled)
+                {
+                    return Ok("Canceled successfully.");
+                }
+                else
+                {
+                    return NotFound("Order not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, "Internal server error");
+            }
+        }
+        //GetAllorders method
+
+        [HttpGet]
+        [Route("GetAllOrders")]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            List<ListOfOrdersModel> orders = await _orderDAL.GetAllOrdersAsync();
+
+            if (orders != null && orders.Count > 0)
+            {
+                return Ok(orders);
+            }
+            else
+            {
+                return StatusCode(500, "Internal server error: Failed to get customer details.");
+            }
+        }
+
+
+        //gettheorder details based on the orderid
+
+        [HttpGet]
+        [Route("GetOrderById")]
+        public async Task<IActionResult> GetOrderById(int orderId)
+        {
+            if (orderId < 0)
+            {
+                return BadRequest("Fail to get Customer");
+            }
+            var order = await _orderDAL.GetOrderByIdAsync(orderId);
+
+            if (order != null)
+            {
+                return Ok(order);
+            }
+            else
+            {
+                return NotFound("Customer not found");
+            }
+        }
+
+
+        //update the deliverydate and deliverystatus based on the orderid
+
+        [HttpPost]
+        [Route("UpdateOrderDetails")]
+        public async Task<IActionResult> UpdateOrderDetails(int orderId, [FromBody] ListOfOrdersModel orderDetails)
+        {
+            if (orderDetails == null)
+            {
+                return BadRequest("Customer details are required.");
+            }
+
+            bool isSuccess = await _orderDAL.UpdateOrderDetailsAsync(orderId, orderDetails);
+
+            if (isSuccess)
+            {
+                return Ok("Customer details updated successfully.");
+            }
+            else
+            {
+                return StatusCode(500, "Internal server error: Failed to update customer details.");
+            }
+        }
+
+
+
+
+
+
+
 
 
 

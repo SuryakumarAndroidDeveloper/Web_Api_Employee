@@ -23,6 +23,22 @@ namespace Ecommerce_WebApi_Application.Controllers
         }
 
 
+
+        [HttpPost("InsertProductJsonData")]
+        public async Task<IActionResult> InsertProductJsonData([FromBody] IEnumerable<ProductModel> jsonData)
+        {
+            if (jsonData == null || !jsonData.Any())
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            await _productDAL.InsertJsonDataToDatabase(jsonData);
+            return Ok("Data inserted successfully");
+        }
+
+
+
+
         //Insert the product details api
 
         [HttpPost]
