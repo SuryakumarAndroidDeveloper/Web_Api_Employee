@@ -55,6 +55,73 @@ namespace Ecommerce_WebApi_Application.DataAcessLayer
             }
         }
 
+        //BuyAgainOrder based on the paymentID and OrderId
+        public async Task<bool> BuyAgainOrder(int paymentId, int orderId)
+        {
+            try { 
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                await connection.OpenAsync();
+                using (var cmd = new SqlCommand("BuyAgainPlaceOrder", connection))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@OrderID", orderId);
+                    cmd.Parameters.AddWithValue("@PaymentId", paymentId);
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+            return true;
+        }
+            catch (Exception ex)
+            {
+                return false; // Return false if failed to place the order
+            }
+}
+
+
+        public async Task<bool> UpdateOrdersAsync(List<ListOfOrdersModel> orders)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    await connection.OpenAsync();
+
+                    foreach (var order in orders)
+                    {
+                        using (var cmd = new SqlCommand("UpdateFullOrderDetails", connection))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+
+                            cmd.Parameters.AddWithValue("@OrderId", order.OrderId);
+                           // cmd.Parameters.AddWithValue("@ProductId", order.ProductId);
+                            cmd.Parameters.AddWithValue("@Quantity", order.Quantity);
+                            // cmd.Parameters.AddWithValue("@TotalPrice", order.TotalPrice);
+                            // cmd.Parameters.AddWithValue("@OrderDate", order.OrderDate);
+                            //  cmd.Parameters.AddWithValue("@IsPaid", order.IsPaid);
+                            cmd.Parameters.AddWithValue("@DeliveryDate", order.DeliveryDate ?? (object)DBNull.Value);
+                            cmd.Parameters.AddWithValue("@DeliveryStatus", order.DeliveryStatus ?? (object)DBNull.Value);
+
+                            await cmd.ExecuteNonQueryAsync();
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex)
+                return false;
+            }
+        }
+
+
+
+
+
+
+
         //Get the orders based on customerid
         public List<MyOrderModel> GetOrderByCustomerId(int customerId)
         {

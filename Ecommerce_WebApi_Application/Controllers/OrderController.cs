@@ -56,6 +56,51 @@ namespace Ecommerce_WebApi_Application.Controllers
                 return BadRequest("Failed to place the order.");
             }
         }
+        //BuyAgainOrder
+        [HttpPost]
+        [Route("BuyAgainOrder")]
+        public async Task<IActionResult> BuyAgainOrder([FromBody] BuyAgainOrderModel buyAgainOrder)
+        {
+            bool isOrderPlaced = await _orderDAL.BuyAgainOrder(buyAgainOrder.PaymentId.Value,buyAgainOrder.OrderId.Value);
+
+            if (isOrderPlaced)
+            {
+                return Ok("Order placed successfully.");
+            }
+            else
+            {
+                return BadRequest("Failed to place the order.");
+            }
+        }
+
+        [HttpPost]
+        [Route("UpdateFullOrderDetails")]
+        public async Task<IActionResult> UpdateFullOrderDetails([FromBody] List<ListOfOrdersModel> orders)
+        {
+            if (orders == null || !orders.Any())
+            {
+                return BadRequest("No orders to update.");
+            }
+
+            try
+            {
+                bool isUpdated = await _orderDAL.UpdateOrdersAsync(orders);
+
+                if (isUpdated)
+                {
+                    return Ok("Orders updated successfully.");
+                }
+                else
+                {
+                    return StatusCode(500, "An error occurred while updating the orders.");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex) here
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
         /*       [HttpPost]
                [Route("PlaceOrder")]
